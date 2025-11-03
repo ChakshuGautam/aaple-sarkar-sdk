@@ -1,0 +1,320 @@
+openapi: 3.0.3
+info:
+  title: Aaple Sarkar - Track Application Status API
+  description: |
+    API specification for department integration with Aaple Sarkar platform.
+    This API allows tracking of application status across Maharashtra Government departments.
+
+    **Security:** All requests and responses are encrypted using TripleDES encryption.
+
+    **Important Conventions:**
+    - Empty string ("") is used for null/missing values, not JSON null
+    - Dates use format: DD-MMM-YYYY,HH:mm:ss (24-hour format, no timezone)
+    - All communication is encrypted
+  version: 3.0.0
+  contact:
+    name: Maharashtra Government
+    url: https://aaplesarkar.maharashtra.gov.in
+
+servers:
+  - url: https://api.{department}.maharashtra.gov.in
+    description: Department API Server
+    variables:
+      department:
+        default: revenue
+        description: Department name (e.g., revenue, municipal, health)
+
+paths:
+  /api/SampleAPI/sendappstatus_encrypted:
+    post:
+      summary: Get Application Status
+      description: |
+        Retrieves the current status of a citizen's application.
+
+        **Request/Response Encryption:**
+        - Request body contains encrypted JSON in "data" field
+        - Response body contains encrypted JSON in "data" field
+        - Encryption: TripleDES, CBC mode, PKCS7 padding, Hex encoding
+
+        **Decrypted Request Format:**
+        ```json
+        {
+          "AppID": "INC12345678",
+          "ServiceID": "4111",
+          "DeptName": "Revenue Department",
+          "Language": "EN"
+        }
+        ```
+      operationId: getApplicationStatus
+      tags:
+        - Application Status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncryptedRequest'
+            example:
+              data: "A1B2C3D4E5F6..." # Encrypted JSON
+      responses:
+        '200':
+          description: Successful response with encrypted application status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EncryptedResponse'
+              example:
+                data: "X1Y2Z3A4B5C6..." # Encrypted JSON
+        '400':
+          description: Bad Request (invalid encrypted data or missing fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    EncryptedRequest:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: string
+          description: TripleDES encrypted JSON string (hex encoded)
+          example: "A1B2C3D4E5F6..."
+      description: |
+        Encrypted wrapper for the actual request.
+        The "data" field contains TripleDES encrypted JSON that decrypts to ApplicationStatusRequest.
+
+    EncryptedResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: string
+          description: TripleDES encrypted JSON string (hex encoded)
+          example: "X1Y2Z3A4B5C6..."
+      description: |
+        Encrypted wrapper for the actual response.
+        The "data" field contains TripleDES encrypted JSON that decrypts to ApplicationStatusResponse.
+
+    ApplicationStatusRequest:
+      type: object
+      required:
+        - AppID
+        - ServiceID
+        - DeptName
+        - Language
+      properties:
+        AppID:
+          type: string
+          description: Unique application identifier
+          example: "INC12345678"
+          minLength: 5
+          maxLength: 50
+        ServiceID:
+          type: string
+          description: Service identifier
+          example: "4111"
+        DeptName:
+          type: string
+          description: Department name
+          example: "Revenue Department"
+        Language:
+          type: string
+          description: Response language
+          enum: [EN, MR]
+          example: "EN"
+      description: |
+        Decrypted request object (this is what's inside the encrypted "data" field).
+
+    ApplicationStatusResponse:
+      type: object
+      required:
+        - ApplicationID
+        - ServiceName
+        - ApplicantName
+        - EstimatedDisbursalDays
+        - ApplicationSubmissionDate
+        - ApplicationPaymentDate
+        - NextActionRequiredDetails
+        - FinalDecision
+        - DepartmentRedirectionURL
+        - TotalNumberOfDesks
+        - CurrentDeskNumber
+        - NextDeskNumber
+        - DeskDetails
+      properties:
+        ApplicationID:
+          type: string
+          description: Application identifier
+          example: "INC12345678"
+        ServiceName:
+          type: string
+          description: Service name (localized based on Language parameter)
+          example: "Income Certificate"
+        ApplicantName:
+          type: string
+          description: Applicant full name
+          example: "FirstName SecondName LastName"
+        EstimatedDisbursalDays:
+          type: integer
+          description: Estimated days for application processing
+          example: 7
+          minimum: 0
+        ApplicationSubmissionDate:
+          type: string
+          description: |
+            Application submission date and time.
+            Format: DD-MMM-YYYY,HH:mm:ss (24-hour format, no timezone)
+            Empty string if not available.
+          example: "18-Sep-2025,17:30:00"
+          pattern: '^\d{2}-[A-Z][a-z]{2}-\d{4},\d{2}:\d{2}:\d{2}$|^$'
+        ApplicationPaymentDate:
+          type: string
+          description: |
+            Payment date and time.
+            Format: DD-MMM-YYYY,HH:mm:ss (24-hour format, no timezone)
+            Empty string if not paid.
+          example: "18-Sep-2025,17:30:00"
+          pattern: '^\d{2}-[A-Z][a-z]{2}-\d{4},\d{2}:\d{2}:\d{2}$|^$'
+        NextActionRequiredDetails:
+          type: string
+          description: |
+            Details of next action required from citizen.
+            Empty string if no action required.
+          example: ""
+        FinalDecision:
+          type: string
+          description: |
+            Final decision on the application.
+            Values: "0" = Approved, "1" = Rejected, "2" = Pending
+            Empty string if decision not made.
+          enum: ["0", "1", "2", ""]
+          example: "2"
+        DepartmentRedirectionURL:
+          type: string
+          description: |
+            Optional URL to department website.
+            Empty string if not available.
+          example: ""
+        TotalNumberOfDesks:
+          type: integer
+          description: Total number of desks in workflow
+          example: 3
+          minimum: 0
+        CurrentDeskNumber:
+          type: integer
+          description: |
+            Current desk number (0 if not assigned to any desk).
+          example: 2
+          minimum: 0
+        NextDeskNumber:
+          type: integer
+          description: |
+            Next desk number (0 if no next desk/final).
+          example: 3
+          minimum: 0
+        DeskDetails:
+          type: array
+          description: |
+            Array of desk review details in ascending order.
+            Can be empty array if no reviews yet.
+          items:
+            $ref: '#/components/schemas/DeskDetail'
+      description: |
+        Decrypted response object (this is what's inside the encrypted "data" field).
+
+        **Important:** All optional text fields use empty string ("") for null values, not JSON null.
+
+    DeskDetail:
+      type: object
+      required:
+        - DeskNumber
+        - ReviewActionBy
+        - ReviewActionDateTime
+        - ReviewActionDetails
+      properties:
+        DeskNumber:
+          type: string
+          description: Desk identifier
+          example: "Desk 1"
+        ReviewActionBy:
+          type: string
+          description: |
+            Name/designation of reviewer.
+            Empty string if not assigned.
+          example: "Awwal Karkun"
+        ReviewActionDateTime:
+          type: string
+          description: |
+            Review date and time.
+            Format: DD-MMM-YYYY,HH:mm:ss (24-hour format, no timezone)
+            Empty string if not reviewed.
+          example: "17-Sep-2025,17:30:00"
+          pattern: '^\d{2}-[A-Z][a-z]{2}-\d{4},\d{2}:\d{2}:\d{2}$|^$'
+        ReviewActionDetails:
+          type: string
+          description: |
+            Review comments/details.
+            Empty string if no comments.
+          example: "Documents verified"
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Application not found"
+        timestamp:
+          type: string
+          description: Error timestamp
+          example: "2025-11-03T14:30:00"
+
+  securitySchemes:
+    TripleDES:
+      type: apiKey
+      in: header
+      name: X-Encryption
+      description: |
+        All request and response bodies are encrypted using TripleDES encryption.
+
+        **Encryption Details:**
+        - Algorithm: TripleDES (3DES)
+        - Mode: CBC (Cipher Block Chaining)
+        - Padding: PKCS7 (Zeros in some implementations)
+        - Encoding: Hex (not Base64)
+        - Key: 24 characters (provided by Aaple Sarkar team)
+        - IV: 8 characters (provided by Aaple Sarkar team)
+
+        **Process:**
+        1. Serialize object to JSON
+        2. Encrypt JSON string with TripleDES
+        3. Convert encrypted bytes to hex string
+        4. Send as {"data": "hex_string"}
+
+security:
+  - TripleDES: []
+
+tags:
+  - name: Application Status
+    description: Operations for retrieving application status
+
+externalDocs:
+  description: Aaple Sarkar Platform
+  url: https://aaplesarkar.maharashtra.gov.in
