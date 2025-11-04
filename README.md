@@ -15,7 +15,6 @@ This repository contains production-ready code and documentation for both sides 
 - **🏛️ [For Departments](GUIDES/For-Departments.md)** - Server API guide (4 steps)
 - **📄 [OpenAPI Specification](openapi.yaml)** - API specification
 - **📘 [Technical Integration V3.3](TECHNICAL_INTEGRATION_V3.3.md)** - Complete technical documentation
-- **📊 [Dashboard Requirements](DASHBOARD_REQUIREMENTS.md)** - RTS timeline bifurcation requirements
 
 ## Structure
 
@@ -24,7 +23,6 @@ This repository contains production-ready code and documentation for both sides 
 ├── README.md                           # This file
 ├── openapi.yaml                        # OpenAPI 3.0 specification
 ├── TECHNICAL_INTEGRATION_V3.3.md      # Complete technical documentation
-├── DASHBOARD_REQUIREMENTS.md           # Dashboard bifurcation requirements
 │
 ├── GUIDES/
 │   ├── For-Aaple-Sarkar.md            # Client integration guide
