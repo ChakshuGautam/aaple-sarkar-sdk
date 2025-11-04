@@ -14,7 +14,6 @@ This repository contains production-ready code and documentation for both sides 
 - **📖 [For Aaple Sarkar Team](GUIDES/For-Aaple-Sarkar.md)** - Client SDK guide (3 steps)
 - **🏛️ [For Departments](GUIDES/For-Departments.md)** - Server API guide (4 steps)
 - **📄 [OpenAPI Specification](openapi.yaml)** - API specification
-- **📘 [Technical Integration V3.3](TECHNICAL_INTEGRATION_V3.3.md)** - Complete technical documentation
 
 ## Structure
 
@@ -22,7 +21,6 @@ This repository contains production-ready code and documentation for both sides 
 .
 ├── README.md                           # This file
 ├── openapi.yaml                        # OpenAPI 3.0 specification
-├── TECHNICAL_INTEGRATION_V3.3.md      # Complete technical documentation
 │
 ├── GUIDES/
 │   ├── For-Aaple-Sarkar.md            # Client integration guide
