@@ -29,7 +29,7 @@ We provide **two ways** to implement your API:
 
 #### Step 1: Add SDK to Project
 ```bash
-1. Copy DepartmentSDK.cs to your project
+1. Copy CODE/Server/DepartmentSDK.cs to your project
 2. Install Newtonsoft.Json:
    Install-Package Newtonsoft.Json
 ```
@@ -129,7 +129,7 @@ public class TrackApplicationController : ApiController
 
 ### Examples Available
 
-See `DepartmentSDK-Examples.cs` for:
+See `CODE/Server/DepartmentSDK-Examples.cs` for:
 
 1. **Basic Web API Controller** - Simplest implementation
 2. **In-Memory Data Provider** - For testing
@@ -150,7 +150,7 @@ See `DepartmentSDK-Examples.cs` for:
 
 ### Step 1: Copy Template
 ```bash
-1. Download DepartmentAPI-Template.cs
+1. Download CODE/Server/DepartmentAPI-Template.cs
 2. Add to your ASP.NET Web API project
 3. Install Newtonsoft.Json:
    Install-Package Newtonsoft.Json
@@ -236,7 +236,7 @@ Get these from Aaple Sarkar team.
 
 ```bash
 1. Deploy to test environment: http://test.yourdept.gov.in
-2. Run DepartmentAPI-Validator.exe
+2. Run CODE/Server/DepartmentAPI-Validator.exe
 3. Configure validator with your test URL and keys
 4. Run tests
 5. Fix any errors
@@ -562,8 +562,8 @@ Share this URL with Aaple Sarkar team along with your encryption keys.
 
 ## Files You Need
 
-✅ **DepartmentAPI-Template.cs** - API template (copy to project)
-✅ **DepartmentAPI-Validator.cs** - Testing tool
+✅ **CODE/Server/DepartmentAPI-Template.cs** - API template (copy to project)
+✅ **CODE/Server/DepartmentAPI-Validator.cs** - Testing tool
 ✅ **Newtonsoft.Json** - Install via NuGet
 
 ---

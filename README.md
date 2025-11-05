@@ -29,12 +29,15 @@ This repository contains **complete production-ready SDKs** for both sides of th
 │   └── For-Departments.md             # Server SDK implementation guide
 │
 └── CODE/
-    ├── TrackApplicationSDK.cs          # Client SDK (870 lines)
-    ├── TrackApplicationSDK-Examples.cs # Client usage examples (500 lines)
-    ├── DepartmentSDK.cs                # Department Server SDK (900 lines) ⭐ NEW
-    ├── DepartmentSDK-Examples.cs       # Server usage examples (1000 lines) ⭐ NEW
-    ├── DepartmentAPI-Template.cs       # Server template (600 lines)
-    └── DepartmentAPI-Validator.cs      # Testing tool (800 lines)
+    ├── Client/                         # For Aaple Sarkar Portal
+    │   ├── TrackApplicationSDK.cs          # Client SDK (870 lines)
+    │   └── TrackApplicationSDK-Examples.cs # Usage examples (500 lines)
+    │
+    └── Server/                         # For Departments
+        ├── DepartmentSDK.cs                # Server SDK (900 lines) ⭐ NEW
+        ├── DepartmentSDK-Examples.cs       # Usage examples (1000 lines) ⭐ NEW
+        ├── DepartmentAPI-Template.cs       # Server template (600 lines)
+        └── DepartmentAPI-Validator.cs      # Testing tool (800 lines)
 ```
 
 ## What's New

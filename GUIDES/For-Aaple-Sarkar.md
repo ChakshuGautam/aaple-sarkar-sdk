@@ -8,7 +8,7 @@
 
 ### Step 1: Install
 ```bash
-1. Copy TrackApplicationSDK.cs to your project
+1. Copy CODE/Client/TrackApplicationSDK.cs to your project
 2. Install Newtonsoft.Json:
    Install-Package Newtonsoft.Json
 ```
@@ -299,8 +299,8 @@ if (submittedDate.HasValue)
 
 ## Files You Need
 
-✅ **TrackApplicationSDK.cs** - The SDK (copy to your project)
-✅ **TrackApplicationSDK-Examples.cs** - More examples if needed
+✅ **CODE/Client/TrackApplicationSDK.cs** - The SDK (copy to your project)
+✅ **CODE/Client/TrackApplicationSDK-Examples.cs** - More examples if needed
 ✅ **Newtonsoft.Json** - Install via NuGet
 
 ---
