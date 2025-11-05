@@ -4,11 +4,153 @@
 
 ---
 
+## Two Options Available
+
+We provide **two ways** to implement your API:
+
+### Option 1: Department SDK (Recommended) ⭐
+- **Complete production-ready SDK**
+- Handles all encryption, validation, and error handling
+- Just implement one interface with your database logic
+- Includes 10 comprehensive examples
+- Best for new implementations
+
+### Option 2: API Template
+- Lightweight template file
+- More control and customization
+- Implement one method with your database logic
+- Good for simple integrations
+
+---
+
+## Option 1: Department SDK (Recommended)
+
+### Quick Start (3 Steps)
+
+#### Step 1: Add SDK to Project
+```bash
+1. Copy CODE/Server/DepartmentSDK.cs to your project
+2. Install Newtonsoft.Json:
+   Install-Package Newtonsoft.Json
+```
+
+#### Step 2: Implement Data Provider Interface
+
+Create a class that implements `IDepartmentDataProvider`:
+
+```csharp
+using MaharashtraGov.DepartmentAPI;
+
+public class MyDepartmentDataProvider : IDepartmentDataProvider
+{
+    public async Task<ApplicationStatusResponse> GetApplicationStatusAsync(
+        string applicationId,
+        string serviceId,
+        string departmentName,
+        string language,
+        CancellationToken cancellationToken = default)
+    {
+        // Query YOUR database
+        var app = await _dbContext.Applications
+            .FirstOrDefaultAsync(a => a.ApplicationID == applicationId);
+
+        if (app == null)
+            throw new ApplicationNotFoundException();
+
+        // Return response using helper methods
+        return new ApplicationStatusResponse
+        {
+            ApplicationID = applicationId,
+            ServiceName = language == "MR" ? "उत्पन्नाचा दाखला" : "Income Certificate",
+            ApplicantName = app.ApplicantName,
+            EstimatedDisbursalDays = 7,
+            ApplicationSubmissionDate = ResponseHelper.FormatDate(app.SubmittedDate),
+            ApplicationPaymentDate = ResponseHelper.FormatDate(app.PaymentDate),
+            NextActionRequiredDetails = app.ActionDetails ?? "",
+            FinalDecision = app.IsApproved ? "0" : "2",
+            DepartmentRedirectionURL = "",
+            TotalNumberOfDesks = 3,
+            CurrentDeskNumber = app.CurrentDesk,
+            NextDeskNumber = app.NextDesk,
+            DeskDetails = GetDeskDetails(app) // Your helper method
+        };
+    }
+}
+```
+
+#### Step 3: Create Web API Controller
+
+```csharp
+[RoutePrefix("api/SampleAPI")]
+public class TrackApplicationController : ApiController
+{
+    private static readonly DepartmentApiHandler _handler;
+
+    static TrackApplicationController()
+    {
+        var config = new DepartmentConfiguration
+        {
+            EncryptionKey = ConfigurationManager.AppSettings["EncryptionKey"],
+            EncryptionIV = ConfigurationManager.AppSettings["EncryptionIV"],
+            EnableLogging = true
+        };
+
+        var dataProvider = new MyDepartmentDataProvider();
+        _handler = new DepartmentApiHandler(config, dataProvider);
+    }
+
+    [HttpPost]
+    [Route("sendappstatus_encrypted")]
+    public async Task<IHttpActionResult> SendApplicationStatusEncrypted()
+    {
+        string requestBody = await Request.Content.ReadAsStringAsync();
+        var result = await _handler.ProcessRequestAsync(requestBody);
+
+        if (result.IsSuccess)
+            return Content(HttpStatusCode.OK, result.EncryptedData);
+        else
+            return Content((HttpStatusCode)result.StatusCode, result.ErrorData);
+    }
+}
+```
+
+**That's it!** SDK handles encryption, decryption, validation, and error handling automatically.
+
+### SDK Benefits
+
+✅ **Automatic Encryption/Decryption** - No crypto code needed
+✅ **Request Validation** - All fields validated automatically
+✅ **Response Validation** - Ensures spec compliance
+✅ **Error Handling** - Proper HTTP status codes
+✅ **Helper Utilities** - Date formatting, status mapping, etc.
+✅ **Logging Support** - Built-in logging
+✅ **Type Safety** - Full IntelliSense support
+✅ **10 Examples** - Covers all scenarios
+
+### Examples Available
+
+See `CODE/Server/DepartmentSDK-Examples.cs` for:
+
+1. **Basic Web API Controller** - Simplest implementation
+2. **In-Memory Data Provider** - For testing
+3. **Entity Framework Integration** - Real database
+4. **ASP.NET Core** - Modern .NET Core
+5. **Multi-Language Support** - EN/MR handling
+6. **Error Handling** - Comprehensive error handling
+7. **Configuration** - Web.config/appsettings.json
+8. **Unit Testing** - Testing your implementation
+9. **Performance Monitoring** - Adding metrics
+10. **Production-Ready** - Complete implementation
+
+---
+
+## Option 2: API Template
+
 ## Quick Start (4 Steps)
 
 ### Step 1: Copy Template
 ```bash
-1. Download DepartmentAPI-Template.cs
+1. Download CODE/Server/DepartmentAPI-Template.cs
 2. Add to your ASP.NET Web API project
 3. Install Newtonsoft.Json:
    Install-Package Newtonsoft.Json
@@ -94,7 +236,7 @@ Get these from Aaple Sarkar team.
 
 ```bash
 1. Deploy to test environment: http://test.yourdept.gov.in
-2. Run DepartmentAPI-Validator.exe
+2. Run CODE/Server/DepartmentAPI-Validator.exe
 3. Configure validator with your test URL and keys
 4. Run tests
 5. Fix any errors
@@ -420,8 +562,8 @@ Share this URL with Aaple Sarkar team along with your encryption keys.
 
 ## Files You Need
 
-✅ **DepartmentAPI-Template.cs** - API template (copy to project)
-✅ **DepartmentAPI-Validator.cs** - Testing tool
+✅ **CODE/Server/DepartmentAPI-Template.cs** - API template (copy to project)
+✅ **CODE/Server/DepartmentAPI-Validator.cs** - Testing tool
 ✅ **Newtonsoft.Json** - Install via NuGet
 
 ---
